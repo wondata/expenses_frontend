@@ -10,7 +10,22 @@ export const GetExpenses = async (dispatch) => {
     ];
 
     dispatch(ActionCreators.setExpenses(expenses));
-  } catch {
-    console.log("Error!");
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const NewExpense = async (dispatch, expense) => {
+  try {
+    //api call
+    dispatch(
+      ActionCreators.newExpense({
+        id: 10,
+        description: expense.description,
+        amount: expense.amount,
+      })
+    );
+  } catch (error) {
+    console.log(error);
   }
 };

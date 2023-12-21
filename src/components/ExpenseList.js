@@ -9,9 +9,10 @@ const ExpenseList = () => {
 
   useEffect(() => {
     GetExpenses(dispatch);
-  });
+  }, []);
+
   return expenses.map((e) => (
-    <div style={{ marginBottom: "1rem" }}>
+    <div key={e.id} style={{ marginBottom: "1rem" }}>
       <ListRow expense={e} />
     </div>
   ));
