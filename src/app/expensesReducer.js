@@ -5,11 +5,15 @@ const initialState = {
 export const ActionTypes = {
   SET_EXPENSES: "SET_EXPENSES",
   NEW_EXPENSE: "NEW_EXPENSE",
+  EDIT_EXPENSE: "EDIT_EXPENSE",
+  DELETE_EXPENSE: "DELETE_EXPENSE",
 };
 
 export const ActionCreators = {
   setExpenses: (payload) => ({ type: ActionTypes.SET_EXPENSES, payload }),
   newExpense: (payload) => ({ type: ActionTypes.NEW_EXPENSE, payload }),
+  editExpense: (payload) => ({ type: ActionTypes.EDIT_EXPENSE, payload }),
+  deleteExpense: (payload) => ({ type: ActionTypes.DELETE_EXPENSE, payload }),
 };
 
 export default (state = initialState, action) => {
@@ -17,8 +21,20 @@ export default (state = initialState, action) => {
     case ActionTypes.SET_EXPENSES:
       return { ...state, expenses: [...action.payload] };
     case ActionTypes.NEW_EXPENSE:
-      debugger;
       return { ...state, expenses: [action.payload, ...state.expenses] };
+    case ActionTypes.EDIT_EXPENSE:
+      return {
+        ...state,
+        expenses: state.expenses.map((e) => {
+          if (e.id === action.payload.id) {
+            e = action.payload;
+          }
+          return e;
+        }),
+      };
+    case ActionTypes.DELETE_EXPENSE:
+      var expenses = state.expenses.filter((e) => e.id !== action.payload.id);
+      return { ...state, expenses: [...expenses] };
     default:
       return state;
   }

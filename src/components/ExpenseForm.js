@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Col, Form, Row } from "react-bootstrap";
-import { NewExpense } from "../services/expenses";
+import { DeleteExpense, EditExpense, NewExpense } from "../services/expenses";
 import { useDispatch } from "react-redux";
 
-const ExpenseForm = () => {
+const ExpenseForm = ({ expense, setIsEditing }) => {
   const descriptions = [
     "Groceries",
     "Credit Card",
@@ -14,7 +14,17 @@ const ExpenseForm = () => {
   const dispatch = useDispatch();
   const [isNewExpense, setIsNewExpense] = useState(true);
   const [amount, setAmount] = useState(0);
-  const [description, setDescription] = useState(descriptions[1]);
+  const [description, setDescription] = useState(descriptions[0]);
+
+  useEffect(() => {
+    if (expense !== undefined) {
+      setIsNewExpense(false);
+      setAmount(expense.amount);
+    } else {
+      setIsNewExpense(true);
+    }
+  }, [expense]);
+
   return (
     <Form
       onSubmit={(event) => {
@@ -24,6 +34,12 @@ const ExpenseForm = () => {
           NewExpense(dispatch, { description: description, amount: amount });
         } else {
           //edit expense
+          EditExpense(dispatch, {
+            id: expense.id,
+            description: description,
+            amount: amount,
+          });
+          setIsEditing(false);
         }
       }}
     >
@@ -45,7 +61,7 @@ const ExpenseForm = () => {
           <Form.Control
             type="number"
             step="0.01"
-            placeholder="0"
+            placeholder={amount}
             onChange={(e) => setAmount(e.target.value)}
           />
         </Col>
@@ -56,11 +72,25 @@ const ExpenseForm = () => {
             </Button>
           ) : (
             <div>
-              <Button variant="danger">Delete</Button>
-              <Button variant="success" type="submit">
+              <Button
+                style={{ marginRight: "2px" }}
+                variant="danger"
+                onClick={() => {
+                  DeleteExpense(dispatch, expense);
+                }}
+              >
+                Delete
+              </Button>
+              <Button
+                style={{ marginRight: "2px" }}
+                variant="success"
+                type="submit"
+              >
                 Save
               </Button>
-              <Button variant="default">Cancel</Button>
+              <Button variant="default" onClick={() => setIsEditing(false)}>
+                Cancel
+              </Button>
             </div>
           )}
         </Col>
